@@ -1,0 +1,14 @@
+#pragma once
+#include "core/ampDefinitions.h"
+#include "core/listener.h"
+#include "core/HardwareInterface.h"
+#include "modules/preamp/preamp.h"
+#include "modules/poweramp/powerAmp.h"
+#include "modules/tonestack/tone.h"
+#include "modules/boost/boost.h"
+#include "modules/cabsim/cabsim_fft.h"
+#include "modules/antiAlias.h"
+#include "modules/output.h"
+#include <memory>
+#include <vector>
+#include <algorithm>
