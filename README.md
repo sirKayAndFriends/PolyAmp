@@ -12,6 +12,9 @@ Finally, I am not a programmer. At all.  I am a musician who futzes around with 
 # OVERVIEW
 ## BOOST
 A boost section designed to cover most of the types of boosts guitarists like.  This is a boost-only high-shelf filter with a variable frequency ("A high-shelf filter passes all frequencies, but increases or reduces frequencies above the shelf frequency by specified amount" [wikipedia](https://en.wikipedia.org/wiki/Filter_design)).  The frequency goes from 700hz to 2500hz to cover everything from Tubescreamer-ish sounds to Rangemaster-esque noises.  There is also a boost/cut low-shelf filter set at 100hz - useful cutting bass from mid/treble boosts or boosting bass like a Stringray!  
+
+This module can be easily omitted by commenting out "#define BOOST 1" in core/ampDefinitions.h
+
 *Knobs: boostAmt, boostFreq, boostCut*
 
 ## PREAMP
@@ -25,3 +28,22 @@ HI CHANNEL 90s "high gain" I think.  Four triodes, severe filtering and lots mor
 
 *Knobs: overdrive, (channel)*
 
+## POWER AMP
+Two pentodes for more distortion.  Not a lot of control over these guys, set-and-forget the input gain and saturation with the channel control.
+
+*Knobs: (channel)*
+
+## TONE STACK
+A three band active EQ section with parametric mid control.  Bass and treble are constant frequency (150hz and 2000hz respectively) with the control being a cut/boost gain control.  The mid section is a peaking filter with a gain control and frequency control which sweeps from 400hz to 850hz.  This is the "voice" of the amp and is used to get those nice american or british sounds
+
+*Knobs: toneBass, toneMid, toneTreble, toneVoice*
+
+## CABSIM
+An FFT convolver for guitar cab Impulse Responses.  Load in your fave guitar cabs!  (Check out the guide for adding IRs at the bottom).  This uses the [HiFi-LoFI FFT convolver](https://github.com/HiFi-LoFi/FFTConvolver) which is super simple to use and works very, very nicely.  Legend. (I made my own FIR filter and it was bad - it used about 80% of the Daisy's CPU with only a 128 sample IR).  Five slots in total but fewer can be used with no code editing (see guide) - one of the slots can also be reserved as a bypass.
+
+This module can be easily omitted by commenting out "#define CABSIM 1" in core/ampDefinitions.h
+
+*Knobs: cabslot*
+
+## OTHER MODULES
+also included are an Output module (just a block-based volume control with separate max values for each channel), two antialiasing lowpass filters (set at 10,000hz and placed after the preamp and poweramp modules).  Pretty simple.  By default the program has a stereo output but can be modded to be a mono output by commenting out the line "#define STEREO 1" in core/ampDefinitions.h
