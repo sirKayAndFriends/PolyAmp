@@ -11,7 +11,7 @@ Finally, I am not a programmer. At all.  I am a musician who futzes around with 
 
 # OVERVIEW
 ## BOOST
-A boost section designed to cover most of the types of boosts guitarists like.  This is a boost-only high-shelf filter with a variable frequency ("A high-shelf filter passes all frequencies, but increases or reduces frequencies above the shelf frequency by specified amount" [wikipedia](https://en.wikipedia.org/wiki/Filter_design)).  The frequency goes from 700hz to 2500hz to cover everything from Tubescreamer-ish sounds to Rangemaster-esque noises.  There is also a boost/cut low-shelf filter set at 100hz - useful cutting bass from mid/treble boosts or boosting bass like a Stringray!
+A boost section designed to cover most of the types of boosts guitarists like.  This is a boost-only high-shelf filter with a variable frequency ("A high-shelf filter passes all frequencies, but increases or reduces frequencies above the shelf frequency by specified amount" [wikipedia](https://en.wikipedia.org/wiki/Filter_design)).  The frequency goes from 700hz to 2500hz to cover everything from Tubescreamer-ish sounds to Rangemaster-esque noises.  There is also a boost/cut low-shelf filter set at 100hz - useful cutting bass from mid/treble boosts or boosting bass like a Stringray!  
 *Knobs: boostAmt, boostFreq, boostCut*
 
 ## PREAMP
