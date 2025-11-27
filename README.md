@@ -45,5 +45,14 @@ This module can be easily omitted by commenting out "#define CABSIM 1" in core/a
 
 *Knobs: cabslot*
 
+## CHANNEL
+This isn't really a module and has mostly been covered but I thought I'd cover it here anyway.  The channel switch updates the preamp, poweramp and output modules all at once.  The preamp switches to a different object for processing each with their own triodes, parameters and settings (lo, mid, or hi); the poweramp simply has two variables updated (input gain "sag" and saturation); the output has three volume variables, one for each channel.  See the next section for info.
+
+*Knobs: channel*
+
 ## OTHER MODULES
-also included are an Output module (just a block-based volume control with separate max values for each channel), two antialiasing lowpass filters (set at 10,000hz and placed after the preamp and poweramp modules).  Pretty simple.  By default the program has a stereo output but can be modded to be a mono output by commenting out the line "#define STEREO 1" in core/ampDefinitions.h
+also included are an Output module (just a block-based volume control with separate max values for each channel) and two antialiasing lowpass filters (set at 10,000hz and placed after the preamp and poweramp modules).  Pretty simple.  
+
+The output is maybe over-engineered but volume control is a little tricky.  Internally there can be over 20x gain which needs to be scaled down again - but the "mid" and "hi" channels also are clipped severely which lowers the volume ("compression").  So in some cases the "lo" channel is waaay louder than the others as the volume increase is more linear.  Ho hum.  Also the cabsim adds a fair amount of volume depending on the IR.  Also you don't want to clip the output of whatever microcontroller you're using OR the op-amp buffers after the output.  So yeah I did my best and tried to make the clean sounds as loud as possible while still keeping the volume knob as usable as possible.  Feel free to tinker.
+
+By default the program has a stereo output but can be modded to be a mono output by commenting out the line "#define STEREO 1" in core/ampDefinitions.h
