@@ -35,11 +35,11 @@ float Pentode::gridConduction(float input, float thresh)
     }
 }
 
-void Pentode::processBlock(float** buffer, size_t size)
+void Pentode::processBlock(float* buffer, size_t size)
 {
     for(size_t index = 0; index < size; index++)
     {
-        float sample = buffer[0][index];
+        float sample = buffer[index];
 
         //PIRKLE POWER AMP
         float in_pos = sample;
@@ -68,7 +68,7 @@ void Pentode::processBlock(float** buffer, size_t size)
 
         sample *= params.gain;
 
-        buffer[0][index] = sample;
+        buffer[index] = sample;
     }
 }
 

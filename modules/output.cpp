@@ -13,10 +13,10 @@ std::shared_ptr<Output::outputData> Output::setup()
     return params;
 }
 
-void Output::processBlock(float** buffer, size_t size)
+void Output::processBlock(float* buffer, size_t size)
 {
     for(size_t index = 0; index < size; index++)
     {
-        buffer[0][index] *= channelOutputGain[params->activeChannel];
+        buffer[index] *= channelOutputGain[params->activeChannel];
     }
 }

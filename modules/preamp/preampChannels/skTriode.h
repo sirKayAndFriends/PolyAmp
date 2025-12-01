@@ -13,7 +13,7 @@ public:
 
     void setup(float dc, double Fs);
     
-    void processBlock(float** buffer, size_t size);
+    void processBlock(float* buffer, size_t size);
 
     //the compression part of the waveshaping
     float gridConduction(float input, float thresh);

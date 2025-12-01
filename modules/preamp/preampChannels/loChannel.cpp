@@ -6,7 +6,7 @@ void LO_Channel::setup(double _sampleRate)
     
     sampleRate = _sampleRate;
 
-    gainMultiplier = 15.0;
+    gainMultiplier = 10.0;
 
     triode1.outputGain = 0.7;
     triode1.waveSaturation = 0.5;
@@ -28,7 +28,7 @@ void LO_Channel::setup(double _sampleRate)
     triode3.setup(dcOffset[2], sampleRate);
 }
 
-void LO_Channel::processBlock(float** buffer, size_t size)
+void LO_Channel::processBlock(float* buffer, size_t size)
 {
     triode1.processBlock(buffer, size);
 

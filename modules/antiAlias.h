@@ -10,7 +10,7 @@ public:
     
     void setup(double _sampleRate);
 
-    void processBlock(float** buffer, size_t size);
+    void processBlock(float* buffer, size_t size);
 
 private:
 

@@ -138,16 +138,16 @@ float skFilters::process(float input)
     return output;
 }
 
-void skFilters::processBlock(float** buffer, size_t size)
+void skFilters::processBlock(float* buffer, size_t size)
 {
     for(size_t index = 0; index < size; index++)
     {
-        float sample = buffer[0][index];
+        float sample = buffer[index];
 
         float output = sample * a0 + z1;
         z1 = sample * a1 + z2 - b1 * output;
         z2 = sample * a2 - b2 * output;
 
-        buffer[0][index] = output;
+        buffer[index] = output;
     }
 }

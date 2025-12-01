@@ -22,7 +22,7 @@ public:
 
     float process(float input);
 
-    void processBlock(float** buffer, size_t size);
+    void processBlock(float* buffer, size_t size);
 
 private:
     int filterType;

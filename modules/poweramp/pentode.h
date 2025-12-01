@@ -23,7 +23,7 @@ public:
 
     void update(float sag, float saturation);
     
-    void processBlock(float** buffer, size_t size);
+    void processBlock(float* buffer, size_t size);
 
     float doPirkleWaveshaper(float input, float g, float fixedDC, float variableDC);
 

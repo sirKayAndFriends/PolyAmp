@@ -25,10 +25,10 @@ void CabSimFFT::update(int newCab)
     }
 }
 
-void CabSimFFT::processBlock(float** buffer, size_t size)
+void CabSimFFT::processBlock(float* buffer, size_t size)
 {
     if(ready)
     {
-        convolver->process(buffer[0], buffer[0], size);
+        convolver->process(buffer, buffer, size);
     }
 }

@@ -21,7 +21,7 @@ public:
 
     void update();
 
-    void processBlock(float** buffer, size_t size);
+    void processBlock(float* buffer, size_t size);
 
 private:
 

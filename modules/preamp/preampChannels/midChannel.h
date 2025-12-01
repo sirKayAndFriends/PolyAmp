@@ -9,7 +9,7 @@ public:
     
     void setup(double _sampleRate) override;
 
-    void processBlock(float** buffer, size_t size) override;
+    void processBlock(float* buffer, size_t size) override;
 
     int id = 1;
 

@@ -5,7 +5,7 @@ class Volume
 {
 public:
 
-    void processBlock(float** buffer, size_t size);
+    void processBlock(float* buffer, size_t size);
 
     void update(float volume);
 

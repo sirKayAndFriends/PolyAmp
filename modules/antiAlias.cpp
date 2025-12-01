@@ -7,7 +7,7 @@ void AntiAlias::setup(double _sampleRate)
     aaf->calc(freq, 1.0, q, sampleRate);
 }
 
-void AntiAlias::processBlock(float** buffer, size_t size)
+void AntiAlias::processBlock(float* buffer, size_t size)
 {
     aaf->processBlock(buffer, size);
 }

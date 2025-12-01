@@ -34,7 +34,7 @@ void MID_Channel::setup(double _sampleRate)
     triode4.setup(dcOffset[3], sampleRate);
 }
 
-void MID_Channel::processBlock(float** buffer, size_t size)
+void MID_Channel::processBlock(float* buffer, size_t size)
 {
     triode1.processBlock(buffer, size);
 

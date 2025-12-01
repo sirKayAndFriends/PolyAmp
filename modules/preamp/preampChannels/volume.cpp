@@ -1,10 +1,10 @@
 #include "volume.h"
 
-void Volume::processBlock(float** buffer, size_t size)
+void Volume::processBlock(float* buffer, size_t size)
 {
     for(size_t index = 0; index < size; index++)
     {
-        buffer[0][index] *= gain;
+        buffer[index] *= gain;
     }
 }
 

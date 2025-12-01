@@ -1,15 +1,34 @@
 #include "HardwareInterface.h"
 
-void HardwareInterface::setup(double _sampleRate, int _blockSize, std::vector<bool>* _moduleFlags)
+void HardwareInterface::setup
+(       
+    std::shared_ptr<std::vector<float>> hardwareValues, 
+    std::shared_ptr<std::vector<float>> processorValues, 
+    std::shared_ptr<std::vector<bool>> _moduleFlags,
+    std::shared_ptr<std::vector<int>> _presetPins
+)    
 {
-    sampleRate = _sampleRate;
-    dsy_blockSize = _blockSize;
+    hardware = hardwareValues;
+    processor = processorValues;
     moduleFlags = _moduleFlags;
+    presetPins = _presetPins;
 
-    for(int i = 0; i < numParams; i++)
+    for(size_t i = 0; i < numParams; i++)
     {
-        parameterFlags.push_back(true);
-        pinValues.push_back(0.0f);
+        hardware->push_back(0.0);
+        processor->push_back(0.0);
+        parameterFlags->push_back(true);
+    }
+
+    for(int i = 0; i < numModules; i++)
+    {
+        moduleFlags->push_back(true);
+    }
+
+    for(int i = 0; i < NUM_PRESETS; i++)
+    {
+        presetPins->push_back(0);
+        presetFlags->push_back(false);
     }
 
     listener.setup(numParams);
@@ -19,88 +38,82 @@ void HardwareInterface::setup(double _sampleRate, int _blockSize, std::vector<bo
     presetListener.setInitial(0);
 }
 
+void HardwareInterface::parameterCheck()
+{  
+    listener.query(hardware, parameterFlags);
+
+    //any parameters that are marked "true" are transferred over to processor vector
+    for(int i = 0; i < numParams; i++)
+    {
+        if(parameterFlags->at(i))
+        {
+            processor->at(i) = hardware->at(i);
+        }
+    }
+
+    debugVal = processor->at(0);
+
+    markModuleFlags();
+}
+
 void HardwareInterface::markModuleFlags()
 {
     // boostParams
-    if(parameterFlags[boostFreq] || parameterFlags[boostAmt] || parameterFlags[boostCut])
+    if(parameterFlags->at(boostFreq) || parameterFlags->at(boostAmt) || parameterFlags->at(boostCut))
     {
         moduleFlags->at(BoostModule) = true;
     }
 
     // gain
-    if (parameterFlags[overdrive])
+    if (parameterFlags->at(overdrive))
     {
         moduleFlags->at(PreampModule) = true;
     }
 
     // tonestack
-    if(parameterFlags[toneBass] || parameterFlags[toneMid] || parameterFlags[toneTreble] || parameterFlags[toneVoice])
+    if(parameterFlags->at(toneBass) || parameterFlags->at(toneMid) || parameterFlags->at(toneTreble) || parameterFlags->at(toneVoice))
     {
         moduleFlags->at(TonestackModule) = true;
     }
 
     // channel
-    if(parameterFlags[channel])
+    if(parameterFlags->at(channel))
     {
         moduleFlags->at(ChannelModule) = true;
     }
 
     // cabsim
-    if(parameterFlags[cabslot])
+    if(parameterFlags->at(cabslot))
     {
         moduleFlags->at(CabsimModule) = true;
     }
 
     // output volume
-    if(parameterFlags[volume])
+    if(parameterFlags->at(volume))
     {
         moduleFlags->at(VolumeModule) = true;
     }
 }
 
-void HardwareInterface::parameterCheck(std::vector<float>& knobs, std::vector<bool>& chan, std::vector<bool>& cab)
-{
-    for(int i = 0; i < NUM_ADC_PARAMS; i++)
-    {
-        pinValues[i] = knobs[i];
-    }
-
-    channelRaw(chan);
-    cabSlotsRaw(cab);
-    
-    listener.query(&pinValues, &parameterFlags);
-
-    //any parameters that are marked "true" are transferred over to processor vector
-    for(int i = 0; i < numParams; i++)
-    {
-        if(parameterFlags[i])
-        {
-            paramValues[i] = pinValues[i];
-        }
-    }
-
-    markModuleFlags();
-}
-
-bool HardwareInterface::updatePresets(std::vector<int>& presetPins)
+bool HardwareInterface::presetCheck()
 {
     bool presetFlag = false;
 
-    presetListener.queryInt(&presetPins, &presetFlags);
+    presetListener.queryInt(presetPins, presetFlags);
 
     for(int i = 0; i < NUM_PRESETS; i++)
     {
         //if marked for update transfer hardware values over to amp
-        if(presetFlags[i])
+        if(presetFlags->at(i))
         {
             //copy preset over to processor values
-            if(presetPins[i] > 0)
+            if(presetPins->at(i) > 0)
             {
                 assignPreset(i);
             }
 
             //copy curent hardware values over to preset slot
-            else if(presetPins[i] < 0)
+            else if(presetPins->at(i) < 0)
             {
                 savePreset(i);
             }
@@ -109,11 +122,17 @@ bool HardwareInterface::updatePresets(std::vector<int>& presetPins)
             //mark all hardware values as needing updated
             else 
             {
-                paramValues = pinValues;
+                for(int i = 0; i < numParams; i++)
+                {
+                    if(parameterFlags->at(i))
+                    {
+                        processor->at(i) = hardware->at(i);
+                    }
+                }
                 setAllModuleFlags(true);
             }
 
-            presetFlags[i] = false;
+            presetFlags->at(i) = false;
         }
     }
 
@@ -128,64 +147,33 @@ void HardwareInterface::setAllModuleFlags(bool state)
     }
 }
 
-void HardwareInterface::cabSlotsRaw(std::vector<bool>& cabStates)
-{
-    auto onIterator = std::find(cabStates.begin(), cabStates.end(), false);
-
-    pinValues[cabslot] = std::distance(cabStates.begin(), onIterator);
-}
-
-void HardwareInterface::channelRaw(std::vector<bool>& states)
-{
-    if (states[0])
-    {
-        //middle pos - channel 2
-        if (states[1])
-        {
-            pinValues[channel] = 1.0;
-        }
-
-        //right pos - channel 3
-        else
-        {
-            pinValues[channel] = 2.0;
-        }
-    }
-
-    //left pos - channel 1
-    else
-    {
-        pinValues[channel] = 0.0;
-    }
-}
-
 void HardwareInterface::assignPreset(int index)
 {
     if(index == 0)
     {
-        for(size_t i = 0; i < paramValues.size(); i++)
+        for(size_t i = 0; i < numParams; i++)
         {
-            paramValues[i] = preset1[i];
+            processor->at(i) = preset1[i];
         }
     }
 
     else if (index == 1)
     {
-        for(size_t i = 0; i < paramValues.size(); i++)
+        for(size_t i = 0; i < numParams; i++)
         {
-            paramValues[i] = preset2[i];
+            processor->at(i) = preset2[i];
         }
     }
 
     else if(index == 2)
     {
-        for(size_t i = 0; i < paramValues.size(); i++)
+        for(size_t i = 0; i < numParams; i++)
         {
-            paramValues[i] = preset3[i];
+            processor->at(i) = preset3[i];
         }
     }
 
-    listener.markAsIgnore(&parameterFlags);
+    listener.markAsIgnore(parameterFlags);
     setAllModuleFlags(true);
 }
 
@@ -195,28 +183,28 @@ void HardwareInterface::savePreset(int index)
     //only altered values are saved over
     if(index == 0)
     {
-        for(size_t i = 0; i < paramValues.size(); i++)
+        for(size_t i = 0; i < numParams; i++)
         {
-            preset1[i] = paramValues[i];
+            preset1[i] = processor->at(i);
         }
     }
 
     else if (index == 1)
     {
-        for(size_t i = 0; i < paramValues.size(); i++)
+        for(size_t i = 0; i < numParams; i++)
         {
-            preset2[i] = paramValues[i];
+            preset2[i] = processor->at(i);
         }
     }
 
     else if(index == 2)
     {
-        for(size_t i = 0; i < paramValues.size(); i++)
+        for(size_t i = 0; i < numParams; i++)
         {
-            preset3[i] = paramValues[i];
+            preset3[i] = processor->at(i);
         }
     }
 
-    listener.markAsIgnore(&parameterFlags);
+    listener.markAsIgnore(parameterFlags);
     setAllModuleFlags(true);
 }

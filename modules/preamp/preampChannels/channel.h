@@ -13,7 +13,7 @@ public:
         volume.update(gain * gainMultiplier);
     };
 
-    virtual void processBlock(float** buffer, size_t size) = 0;
+    virtual void processBlock(float* buffer, size_t size) = 0;
 
     float debugVal;
     

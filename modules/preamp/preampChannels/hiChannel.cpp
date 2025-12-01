@@ -8,23 +8,23 @@ void HI_Channel::setup(double _sampleRate)
 
     gainMultiplier = 20.0;
 
-    triode1.outputGain = 1.5;
-    triode1.waveSaturation = 2.0;
-    triode1.outputLSFfreq = 100.0;
+    triode1.outputGain = 0.7;
+    triode1.waveSaturation = 3.0;
+    triode1.outputLSFfreq = 150.0;
     triode1.outputHSFfreq = 8000.0;
 
-    triode2.outputGain = 1.2;
-    triode2.waveSaturation = 2.0;
+    triode2.outputGain = 1.5;
+    triode2.waveSaturation = 3.0;
     triode2.outputLSFfreq = 150.0;
     triode2.outputHSFfreq = 7000.0;
 
-    triode3.outputGain = 1.0;
-    triode3.waveSaturation = 2.0;
+    triode3.outputGain = 1.5;
+    triode3.waveSaturation = 3.0;
     triode3.outputLSFfreq = 100.0;
     triode3.outputHSFfreq = 6000.0;
 
     triode4.outputGain = 0.1;
-    triode4.waveSaturation = 2.0;
+    triode4.waveSaturation = 3.0;
     triode4.outputLSFfreq = 40.0;
     triode4.outputHSFfreq = 5000.0;
 
@@ -34,7 +34,7 @@ void HI_Channel::setup(double _sampleRate)
     triode4.setup(dcOffset[3], sampleRate);
 }
 
-void HI_Channel::processBlock(float** buffer, size_t size)
+void HI_Channel::processBlock(float* buffer, size_t size)
 {
     triode1.processBlock(buffer, size);
 

@@ -23,7 +23,7 @@ void Preamp::update()
     hiChannel.update(params->gainKnobValue);
 }
 
-void Preamp::processBlock(float** buffer, size_t size)
+void Preamp::processBlock(float* buffer, size_t size)
 {
     channels[params->activeChannel]->processBlock(buffer, size);
 }

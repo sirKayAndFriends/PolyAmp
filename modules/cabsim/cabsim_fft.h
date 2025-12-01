@@ -14,7 +14,7 @@ public:
 
     void update(int newCab);
 
-    void processBlock(float** buffer, size_t size);
+    void processBlock(float* buffer, size_t size);
 
     int numCabs = 0;
 

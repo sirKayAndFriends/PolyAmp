@@ -38,11 +38,11 @@ void SKTriode::setup(float dc, double Fs)
     debugVal = sampleRate;
 }
 
-void SKTriode::processBlock(float** buffer, size_t size)
+void SKTriode::processBlock(float* buffer, size_t size)
 {
     for(size_t index = 0; index < size; index++)
     {
-        float sample = buffer[0][index];
+        float sample = buffer[index];
 
         sample = gridConduction(sample, gridThresh);
 
@@ -65,7 +65,7 @@ void SKTriode::processBlock(float** buffer, size_t size)
 
         sample *= -outputGain;
 
-        buffer[0][index] = sample;
+        buffer[index] = sample;
     }
 }
 

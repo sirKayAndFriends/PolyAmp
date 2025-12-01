@@ -5,16 +5,12 @@
 //comment out STEREO if you'd rather have a single output
 #define BOOST
 #define CABSIM
-#define STEREO
 
 #define BLOCK_SIZE 24
 #define NUM_ADC_PARAMS 9
 #define NUM_CHANNELS 3
 #define NUM_PRESETS 3
-
-//the state of these C++ isms
-typedef float** OutputBuffer;
-typedef const float* const* InputBuffer;
+#define NUM_CABS 5
 
 enum moduleNames
 {
@@ -23,7 +19,8 @@ enum moduleNames
     TonestackModule,
     ChannelModule,
     CabsimModule,
-    VolumeModule
+    VolumeModule,
+    numModules
 };
 
 enum parameterNames

@@ -19,7 +19,7 @@ public:
 
         std::vector<float> saturation =
         {
-            1.2, 2.0, 2.0
+            1.2, 2.0, 3.0
         };
 
         int activeChannel = 0;
@@ -31,7 +31,7 @@ public:
 
     void update();
 
-    void processBlock(float** buffer, size_t size);
+    void processBlock(float* buffer, size_t size);
 
 private:
 

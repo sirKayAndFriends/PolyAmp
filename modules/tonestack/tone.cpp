@@ -25,7 +25,7 @@ void Tone::update()
     trebleTone->calc(trebleFreq, trebleGain, slope, sampleRate);
 }
 
-void Tone::processBlock(float** buffer, size_t size)
+void Tone::processBlock(float* buffer, size_t size)
 {
     bassTone->processBlock(buffer, size);
 

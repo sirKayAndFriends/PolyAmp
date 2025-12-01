@@ -62,24 +62,25 @@ public:
 
     */
 
-    //"hardware values"
-    std::vector<float> pinValues;
-
-    //"processor values"
-    std::vector<float> paramValues;
-
-    void setup(double sampleRate, int blockSize, std::vector<bool>* updateFlags);
+    void setup(
+        std::shared_ptr<std::vector<float>> hardwareValues, 
+        std::shared_ptr<std::vector<float>> processorValues, 
+        std::shared_ptr<std::vector<bool>> updateFlags,
+        std::shared_ptr<std::vector<int>> presetPins
+    );
     
     //check parameter values
-    void parameterCheck(std::vector<float>& knobs, std::vector<bool>& chan, std::vector<bool>& cab);
+    void parameterCheck();
     
-    bool updatePresets(std::vector<int>& presetPins);
+    bool presetCheck();
 
     //pointers to preset vectors stored in the Daisy external flash memory
     //these are passed from the "daisy level" main function
     float* preset1;
     float* preset2;
     float* preset3;
+
+    float debugVal;
 
 private:
 
@@ -89,13 +90,16 @@ private:
     Listener presetListener;
 
     //individual parameter markers
-    std::vector<bool> parameterFlags;
+    std::shared_ptr<std::vector<bool>> parameterFlags = std::make_shared<std::vector<bool>>();
     
     //same for preset parameters
-    std::vector<bool> presetFlags = {false, false, false};
+    std::shared_ptr<std::vector<bool>> presetFlags = std::make_shared<std::vector<bool>>();
 
     //vector from processor
-    std::vector<bool>* moduleFlags;
+    std::shared_ptr<std::vector<bool>> moduleFlags;
+    std::shared_ptr<std::vector<float>> hardware;
+    std::shared_ptr<std::vector<float>> processor;
+    std::shared_ptr<std::vector<int>> presetPins;
 
     //runs through individual parameters and groups them into modules
     //e.g. if any tone control is changed (treble, bass etc)
@@ -112,13 +116,4 @@ private:
 
     //save the current processor values in this slot
     void savePreset(int index);
-
-    //conversion of bool pin values to single float value
-    //e.g. three cab slots { true, true, false} would convert to 2.0
-    //{true, true, true, true, false} = 4.0
-    //ACTIVE LOW! (false is active)
-    void cabSlotsRaw(std::vector<bool>& cabStates);
-
-    //same conversion from bool to float
-    void channelRaw(std::vector<bool>& states);
 };

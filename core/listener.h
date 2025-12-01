@@ -20,20 +20,20 @@ public:
     //check if values have changed beyond their threshold
     //input = values to be checked
     //updateFlags = vector of results: false = unchanged, true = marked as changed
-    void query(std::vector<float>* input, std::vector<bool>* updateFlags);
+    void query(std::shared_ptr<std::vector<float>> input, std::shared_ptr<std::vector<bool>> updateFlags);
 
     //check if values have changed beyond their threshold
     //input = values to be checked
     //updateFlags = vector of results: false = unchanged, true = marked as changed
-    void queryInt(std::vector<int>* input, std::vector<bool>* updateFlags);
+    void queryInt(std::shared_ptr<std::vector<int>> input, std::shared_ptr<std::vector<bool>> updateFlags);
     
     //registers all parameter slots as true
     //i.e. for the hardware values to be transferred over to read values
-    void markAsUpdate(std::vector<bool>* updateFlags);
+    void markAsUpdate(std::shared_ptr<std::vector<bool>> updateFlags);
 
     //registers all parameter slots as false
     //i.e. for the hardware values to be ignored
-    void markAsIgnore(std::vector<bool>* updateFlags);
+    void markAsIgnore(std::shared_ptr<std::vector<bool>> updateFlags);
 
 private:
 

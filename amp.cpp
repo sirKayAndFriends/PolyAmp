@@ -6,7 +6,7 @@ Amp::Amp()
 
 void Amp::setup(double sampleRate, int blockSize)
 {
-    ampParams->setup(sampleRate, blockSize, &moduleUpdateFlags);
+    HWI.setup(pinValues, paramValues, moduleUpdateFlags, presetPins);
 
     boostParams = boost.setup(sampleRate);
     preampParams = pre.setup(sampleRate);
@@ -14,89 +14,105 @@ void Amp::setup(double sampleRate, int blockSize)
     toneParams = tonestack.setup(sampleRate);
     volumeParams = outputVolume.setup();
 
-    cabsim.setup(sampleRate, ampParams->dsy_blockSize);
+    cabsim.setup(sampleRate, blockSize);
 
     aaf1.setup(sampleRate);
     aaf2.setup(sampleRate);
-
-    knobValues.resize(NUM_ADC_PARAMS);
-    cabPins.resize(cabsim.numCabs);
-    channelPins.resize(NUM_CHANNELS);
-
-    updateParameters();
 }
 
-void Amp::updateParameters()
+void Amp::updateParameters
+(        
+    float boostGain, float boostFrequency, float boostBass,
+    float distortion,
+    float treble, float mid, float bass, float voice,
+    float masterVolume,
+    int channelNumber,
+    int cabNumber
+)
 {
-    ampParams->updatePresets(presetPins);
+    pinValues->at(boostAmt) = boostGain;
+    pinValues->at(boostFreq) = boostFrequency;
+    pinValues->at(boostCut) = boostBass;
+    pinValues->at(overdrive) = distortion;
+    pinValues->at(toneBass) = bass;
+    pinValues->at(toneMid) = mid;
+    pinValues->at(toneTreble) = treble;
+    pinValues->at(toneVoice) = voice;
+    pinValues->at(volume) = masterVolume;
+    pinValues->at(channel) = (float) channelNumber;
+    pinValues->at(cabslot) = (float) cabNumber;
+
+    // HWI.presetCheck();
 
     //check if hardware values have changed
-    ampParams->parameterCheck(knobValues, channelPins, cabPins);
+    HWI.parameterCheck();
 
-    if(moduleUpdateFlags[BoostModule])
+    // debugVal = HWI.debugVal;
+    debugVal = HWI.debugVal;
+
+    if(moduleUpdateFlags->at(BoostModule))
     {
-        boostParams->peakGain = ampParams->paramValues[boostAmt];
-        boostParams->peakFreq = ampParams->paramValues[boostFreq];
-        boostParams->bassGain = ampParams->paramValues[boostCut];
+        boostParams->peakGain = paramValues->at(boostAmt);
+        boostParams->peakFreq = paramValues->at(boostFreq);
+        boostParams->bassGain = paramValues->at(boostCut);
 
-    
         boost.update();
 
-        moduleUpdateFlags[BoostModule] = false;
+        moduleUpdateFlags->at(BoostModule) = false;
     }
 
-    if(moduleUpdateFlags[PreampModule])
+    if(moduleUpdateFlags->at(PreampModule))
     {
-        preampParams->gainKnobValue = ampParams->paramValues[overdrive]; 
+        preampParams->gainKnobValue = paramValues->at(overdrive); 
         pre.update();
 
-        moduleUpdateFlags[PreampModule] = false;
+        moduleUpdateFlags->at(PreampModule) = false;
     }
 
-    if(moduleUpdateFlags[TonestackModule])
+    if(moduleUpdateFlags->at(TonestackModule))
     {
-        toneParams->bassGain = ampParams->paramValues[toneBass];
-        toneParams->midGain = ampParams->paramValues[toneMid];
-        toneParams->trebleGain = ampParams->paramValues[toneTreble];
-        toneParams->midFreq = ampParams->paramValues[toneVoice];
+        toneParams->bassGain = paramValues->at(toneBass);
+        toneParams->midGain = paramValues->at(toneMid);
+        toneParams->trebleGain = paramValues->at(toneTreble);
+        toneParams->midFreq = paramValues->at(toneVoice);
 
         tonestack.update();
 
-        moduleUpdateFlags[TonestackModule] = false;
+        moduleUpdateFlags->at(TonestackModule) = false;
     }
 
-    if(moduleUpdateFlags[ChannelModule])
+    if(moduleUpdateFlags->at(ChannelModule))
     {
-        preampParams->activeChannel = static_cast<int>(ampParams->paramValues[channel]);
+        preampParams->activeChannel = static_cast<int>(paramValues->at(channel));
         powerParams->activeChannel = preampParams->activeChannel;
         volumeParams->activeChannel = preampParams->activeChannel;
 
         power.update();
 
-        moduleUpdateFlags[ChannelModule] = false;
+        moduleUpdateFlags->at(ChannelModule) = false;
     }
 
-    if(moduleUpdateFlags[CabsimModule])
+    if(moduleUpdateFlags->at(CabsimModule))
     {
-        cabsim.update(ampParams->paramValues[cabslot]); 
+        cabsim.update(paramValues->at(cabslot)); 
 
-        moduleUpdateFlags[CabsimModule] = false;
+        moduleUpdateFlags->at(CabsimModule) = false;
     }
 
-    if(moduleUpdateFlags[VolumeModule])
+    if(moduleUpdateFlags->at(VolumeModule))
     {
-        volumeParams->volume = ampParams->paramValues[volume];
+        volumeParams->volume = paramValues->at(volume);
         outputVolume.update(); 
 
-        moduleUpdateFlags[VolumeModule] = false;
+        moduleUpdateFlags->at(VolumeModule) = false;
     }
 }
 
-void Amp::processBlock(InputBuffer input, OutputBuffer output, size_t size)
+void Amp::processBlock(const float* input, float* output, size_t size)
 {
     for(size_t i = 0; i < size; i++)
     {
-        output[0][i] = input[0][i];
+        output[i] = input[i];
     }   
     
     #ifdef BOOST
@@ -122,17 +138,48 @@ void Amp::processBlock(InputBuffer input, OutputBuffer output, size_t size)
     #endif
 
     outputVolume.processBlock(output, size);
+}
 
-    #ifdef STEREO
+void Amp::processBlock(float* input, size_t size)
+{
+    #ifdef BOOST
     {
-        output[1] = output[0];
+        boost.processBlock(input, size); 
     }
     #endif
+
+    pre.processBlock(input, size);
+
+    aaf1.processBlock(input, size);
+
+    power.processBlock(input, size);
+
+    aaf2.processBlock(input, size);
+
+    tonestack.processBlock(input, size);
+
+    #ifdef CABSIM
+    {
+        cabsim.processBlock(input, size);
+    }
+    #endif
+
+    outputVolume.processBlock(input, size);
 }
 
 void Amp::attachPresetStorage(float* preset1, float* preset2, float* preset3)
 {
-    ampParams->preset1 = preset1;
-    ampParams->preset2 = preset2;
-    ampParams->preset3 = preset3;
+    HWI.preset1 = preset1;
+    HWI.preset2 = preset2;
+    HWI.preset3 = preset3;
+}
+
+void Amp::updatePresets(int presetSlot, int command)
+{
+    presetPins->at(presetSlot) = command;
+}
+
+int Amp::queryPresets(int presetSlot)
+{
+    return presetPins->at(presetSlot);
 }

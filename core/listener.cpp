@@ -24,7 +24,7 @@ void Listener::setInitial(int initialValue)
     }
 }
 
-void Listener::markAsUpdate(std::vector<bool>* updateFlags)
+void Listener::markAsUpdate(std::shared_ptr<std::vector<bool>> updateFlags)
 {
     for(int i = 0; i < numSlots; i++)
     {
@@ -32,7 +32,7 @@ void Listener::markAsUpdate(std::vector<bool>* updateFlags)
     }
 }
 
-void Listener::markAsIgnore(std::vector<bool>* updateFlags)
+void Listener::markAsIgnore(std::shared_ptr<std::vector<bool>> updateFlags)
 {
     for(int i = 0; i < numSlots; i++)
     {
@@ -40,7 +40,7 @@ void Listener::markAsIgnore(std::vector<bool>* updateFlags)
     }
 }
 
-void Listener::query(std::vector<float>* input, std::vector<bool>* updateFlags)
+void Listener::query(std::shared_ptr<std::vector<float>> input, std::shared_ptr<std::vector<bool>> updateFlags)
 {
     for(int i = 0; i < numSlots; i++)
     {
@@ -65,7 +65,7 @@ void Listener::query(std::vector<float>* input, std::vector<bool>* updateFlags)
     }   
 }
 
-void Listener::queryInt(std::vector<int>* input, std::vector<bool>* updateFlags)
+void Listener::queryInt(std::shared_ptr<std::vector<int>> input, std::shared_ptr<std::vector<bool>> updateFlags)
 {
     for(int i = 0; i < numSlots; i++)
     {

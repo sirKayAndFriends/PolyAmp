@@ -23,7 +23,7 @@ void PowerAmp::update()
 	pentodes->update(params->sag[channel], params->saturation[channel]);
 }
 
-void PowerAmp::processBlock(float** buffer, size_t size)
+void PowerAmp::processBlock(float* buffer, size_t size)
 {
 	pentodes->processBlock(buffer, size);
 }

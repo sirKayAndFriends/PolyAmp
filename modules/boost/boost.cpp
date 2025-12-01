@@ -26,7 +26,7 @@ void Boost::update()
     midBoost->calc(peakFreq, peakGain, 1.0, sampleRate);
 }
 
-void Boost::processBlock(float** buffer, size_t size)
+void Boost::processBlock(float* buffer, size_t size)
 {
     bassCut->processBlock(buffer, size);
     midBoost->processBlock(buffer, size);
