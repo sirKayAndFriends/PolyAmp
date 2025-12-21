@@ -1,0 +1,12 @@
+#pragma once
+#include "ampDefinitions.h"
+#include "listener.h"
+#include "HardwareInterface.h"
+#include "../modules/preamp/preamp.h"
+#include "../modules/poweramp/powerAmp.h"
+#include "../modules/tonestack/tone.h"
+#include "../modules/antiAlias.h"
+#include "../modules/output.h"
+#include <memory>
+#include <vector>
+#include <algorithm>

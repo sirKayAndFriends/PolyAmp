@@ -73,7 +73,7 @@ Three biquad filters.  Lowshelf and highshelf with variable gain and static freq
 The mid control is the real hero.  The variable frequency runs from 400hz to 850hz which can cover a whole range of amp tones.  This is not "accurate" to a real guitar amplifier as there is no contouring or anything like that.  BUT it does allow you to get all sorts of sounds and is super versatile and easy to use.  Boosting the mids gets you tweedy or marshally sounds and cutting can get you fendery or rectifiery sounds.
 
 ### Cabsim
-A fast FFT convolver courtesy of HiFi-LoFi (check out README for links)!  Very easy to use and way, WAY better than my first attempt.  Does some very nice cab IR filtering thank you very much.
+A fast FFT convolver courtesy of [HiFi-LoFI](https://github.com/HiFi-LoFi/FFTConvolver).  Very easy to use and way, WAY better than my first attempt.  Does some very nice cab IR filtering thank you very much.
 
 I have defined the IR size at the top of cabism_fft.h thusly:
 

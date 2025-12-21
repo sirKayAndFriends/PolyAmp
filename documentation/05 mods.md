@@ -36,6 +36,8 @@ amp.updateParameters(
     0                       //preset3
 );
 
+Remember, if you want to cut down on knobs just send the amp a static value!
+
 ### Module Mods
 Slightly trickier but not by much.  I anticipate that the modules wanting removed by users are the boost and cabsim modules.  I have included these pre-processor directives in core/ampDefinitions.h:
 
